@@ -110,8 +110,10 @@ public class Plugin : TerrariaPlugin
                 while (string.IsNullOrEmpty(Config.Settings.Token))
                 {
                     await Task.Delay(TimeSpan.FromSeconds(10));
-                    HttpClient client = new ();
-                    client.Timeout = TimeSpan.FromSeconds(5.0);
+                    HttpClient client = new()
+                    {
+                        Timeout = TimeSpan.FromSeconds(5.0)
+                    };
                     var response = client.GetAsync($"https://api.terraria.ink:22338/bot/get_token?code={InitCode}")
                         .Result;
                     if (response.StatusCode != HttpStatusCode.OK || Config.Settings.Token != "")
