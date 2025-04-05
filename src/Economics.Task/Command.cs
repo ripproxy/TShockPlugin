@@ -163,6 +163,12 @@ public class Command
             Plugin.TallkManager.RemoveAll();
             args.Player.SendSuccessMessage(GetString("已清空完成任务!"));
         }
+        else if (args.Parameters.Count >= 1 && args.Parameters[0].ToLower() == "time")
+        {
+        // Menampilkan waktu server
+        string serverTime = $"Waktu Server: {DateTime.Now:yyyy-MM-dd HH:mm:ss}".Color(TShockAPI.Utils.YellowHighlight);
+        args.Player.SendInfoMessage(serverTime);
+        }
         else
         {
             args.Player.SendInfoMessage(GetString("/task list 查看任务列表"));
@@ -172,6 +178,7 @@ public class Command
             args.Player.SendInfoMessage(GetString("/task pr 提交任务"));
             args.Player.SendInfoMessage(GetString("/task del 移除任务"));
             args.Player.SendInfoMessage(GetString("/task reset 清空完成任务"));
+            args.Player.SendInfoMessage(GetString("/task time 清空完成任务"));
         }
     }
 }
