@@ -1,4 +1,4 @@
-﻿using EconomicsAPI.Attributes;
+using EconomicsAPI.Attributes;
 using EconomicsAPI.Extensions;
 using TShockAPI;
 
@@ -24,12 +24,13 @@ public class Command
                 new PaginationTools.Settings
                 {
                     MaxLinesPerPage = Plugin.TaskConfig.PageCount,
-                    NothingToDisplayString = GetString("当前没有任务"),
-                    HeaderFormat = GetString("任务列表 ({0}/{1})："),
-                    FooterFormat = GetString("输入 {0}task list {{0}} 查看更多").SFormat(Commands.Specifier)
+                    NothingToDisplayString = GetString("Saat ini tidak ada tugas"),
+                    HeaderFormat = GetString("Daftar Tugas ({0}/{1}):"),
+                    FooterFormat = GetString("Ketik {0}task list {{0}} untuk melihat lebih banyak").SFormat(Commands.Specifier)
                 }
             );
         }
+
         if (args.Parameters.Count >= 1 && args.Parameters[0].ToLower() == "list")
         {
             var line = Plugin.TaskConfig.Tasks.Select(x => $"{x.TaskID.Color(TShockAPI.Utils.PinkHighlight)}.{x.TaskName.Color(TShockAPI.Utils.CyanHighlight)}").ToList();
@@ -42,23 +43,23 @@ public class Command
                 var task = Plugin.TaskConfig.GetTask(index);
                 if (task == null)
                 {
-                    args.Player.SendErrorMessage(GetString("不存在此任务!"));
+                    args.Player.SendErrorMessage(GetString("Tugas ini tidak ada!"));
                 }
                 else
                 {
-                    args.Player.SendMessage(GetString($"{task.TaskName}介绍: {task.Description}"), Microsoft.Xna.Framework.Color.Wheat);
+                    args.Player.SendMessage(GetString($"{task.TaskName} deskripsi: {task.Description}"), Microsoft.Xna.Framework.Color.Wheat);
                 }
             }
             else
             {
-                args.Player.SendErrorMessage(GetString("错误的技能序号!"));
+                args.Player.SendErrorMessage(GetString("Nomor tugas salah!"));
             }
         }
         else if (args.Parameters.Count == 2 && args.Parameters[0].ToLower() == "pick")
         {
             if (UserTaskData.HasTask(args.Player.Name))
             {
-                args.Player.SendErrorMessage(GetString("您还有一个任务正在进行，不能接多个任务!"));
+                args.Player.SendErrorMessage(GetString("Kamu masih punya tugas aktif, tidak bisa ambil lebih dari satu!"));
             }
             else
             {
@@ -69,39 +70,39 @@ public class Command
                     {
                         if (Plugin.TaskFinishManager.HasFinishTask(index, args.Player.Name))
                         {
-                            args.Player.SendErrorMessage(GetString($"此任务你已经完成过了!"));
+                            args.Player.SendErrorMessage(GetString("Kamu sudah menyelesaikan tugas ini!"));
                             return;
                         }
                         if (!Plugin.InOfFinishTask(args.Player, task.FinishTask))
                         {
-                            args.Player.SendErrorMessage(GetString($"必须完成任务 {string.Join(",", task.FinishTask)} 才能接此任务"));
+                            args.Player.SendErrorMessage(GetString($"Harus menyelesaikan tugas {string.Join(",", task.FinishTask)} terlebih dahulu"));
                             return;
                         }
                         if (!RPG.RPG.InLevel(args.Player.Name, task.LimitLevel))
                         {
-                            args.Player.SendErrorMessage(GetString($"只有在{string.Join(", ", task.LimitLevel)} 以及符等级才能接取此任务"));
+                            args.Player.SendErrorMessage(GetString($"Hanya level {string.Join(", ", task.LimitLevel)} yang dapat mengambil tugas ini"));
                             return;
                         }
                         if (!args.Player.InProgress(task.LimitProgress))
                         {
-                            args.Player.SendErrorMessage(GetString($"需要满足进度{string.Join(", ", task.LimitLevel)}才能接取此任务"));
+                            args.Player.SendErrorMessage(GetString($"Syarat progres {string.Join(", ", task.LimitLevel)} diperlukan untuk mengambil tugas ini"));
                             return;
                         }
 
                         UserTaskData.Add(args.Player.Name, index);
                         Plugin.TaskFinishManager.Add(index, args.Player.Name, TaskStatus.Ongoing);
-                        args.Player.SendSuccessMessage(GetString("任务接取成功!"));
-                        args.Player.SendSuccessMessage(GetString($"任务名称:{task.TaskName}"));
-                        args.Player.SendSuccessMessage(GetString($"任务介绍:{task.Description}"));
+                        args.Player.SendSuccessMessage(GetString("Tugas berhasil diambil!"));
+                        args.Player.SendSuccessMessage(GetString($"Nama tugas: {task.TaskName}"));
+                        args.Player.SendSuccessMessage(GetString($"Deskripsi tugas: {task.Description}"));
                     }
                     else
                     {
-                        args.Player.SendErrorMessage(GetString("任务不存在!"));
+                        args.Player.SendErrorMessage(GetString("Tugas tidak ada!"));
                     }
                 }
                 else
                 {
-                    args.Player.SendErrorMessage(GetString("输入了一个错误的序号!"));
+                    args.Player.SendErrorMessage(GetString("Nomor yang dimasukkan salah!"));
                 }
             }
         }
@@ -114,7 +115,7 @@ public class Command
             }
             else
             {
-                args.Player.SendErrorMessage(GetString("你没有接取一个任务!"));
+                args.Player.SendErrorMessage(GetString("Kamu belum mengambil tugas!"));
             }
         }
         else if (args.Parameters.Count == 1 && args.Parameters[0].ToLower() == "del")
@@ -122,11 +123,11 @@ public class Command
             if (UserTaskData.HasTask(args.Player.Name))
             {
                 UserTaskData.Remove(args.Player.Name);
-                args.Player.SendSuccessMessage(GetString("你已放弃一个任务!!"));
+                args.Player.SendSuccessMessage(GetString("Kamu telah membatalkan sebuah tugas!"));
             }
             else
             {
-                args.Player.SendSuccessMessage(GetString("你还没有开始接任务!!"));
+                args.Player.SendSuccessMessage(GetString("Kamu belum memulai tugas apa pun!"));
             }
         }
         else if (args.Parameters.Count == 1 && args.Parameters[0].ToLower() == "pr")
@@ -142,43 +143,42 @@ public class Command
                 }
                 else
                 {
-                    args.Player.SendErrorMessage(GetString("你当前的任务还没有完成!"));
+                    args.Player.SendErrorMessage(GetString("Tugasmu saat ini belum selesai!"));
                 }
             }
             else
             {
-                args.Player.SendErrorMessage(GetString("你还没有接一个任务!"));
+                args.Player.SendErrorMessage(GetString("Kamu belum mengambil tugas!"));
             }
         }
         else if (args.Parameters.Count == 1 && args.Parameters[0].ToLower() == "reset")
         {
             if (!args.Player.HasPermission(Permission.TaskAdmin))
             {
-                args.Player.SendErrorMessage(GetString("你没有使用该指令的权限!"));
+                args.Player.SendErrorMessage(GetString("Kamu tidak punya izin untuk menggunakan perintah ini!"));
                 return;
             }
             Plugin.TaskFinishManager.RemoveAll();
             UserTaskData.Clear();
             Plugin.KillNPCManager.RemoveAll();
             Plugin.TallkManager.RemoveAll();
-            args.Player.SendSuccessMessage(GetString("已清空完成任务!"));
+            args.Player.SendSuccessMessage(GetString("Semua tugas yang selesai telah dibersihkan!"));
         }
         else if (args.Parameters.Count >= 1 && args.Parameters[0].ToLower() == "time")
         {
-        // Menampilkan waktu server
-        string serverTime = $"Waktu Server: {DateTime.Now:yyyy-MM-dd HH:mm:ss}".Color(TShockAPI.Utils.YellowHighlight);
-        args.Player.SendInfoMessage(serverTime);
+            // Menampilkan waktu server
+            string serverTime = $"Waktu Server: {DateTime.Now:yyyy-MM-dd HH:mm:ss}".Color(TShockAPI.Utils.YellowHighlight);
+            args.Player.SendInfoMessage(serverTime);
         }
         else
         {
-            args.Player.SendInfoMessage(GetString("/task list 查看任务列表"));
-            args.Player.SendInfoMessage(GetString("/task info <序号> 查看任务详情"));
-            args.Player.SendInfoMessage(GetString("/task pick <序号> 接取一个任务"));
-            args.Player.SendInfoMessage(GetString("/task prog 查看任务完成进度"));
-            args.Player.SendInfoMessage(GetString("/task pr 提交任务"));
-            args.Player.SendInfoMessage(GetString("/task del 移除任务"));
-            args.Player.SendInfoMessage(GetString("/task reset 清空完成任务"));
-            args.Player.SendInfoMessage(GetString("/task time 清空完成任务"));
-        }
-    }
+            args.Player.SendInfoMessage(GetString("/task list untuk melihat daftar tugas"));
+            args.Player.SendInfoMessage(GetString("/task info <id> untuk melihat detail tugas"));
+            args.Player.SendInfoMessage(GetString("/task pick <id> untuk mengambil tugas"));
+            args.Player.SendInfoMessage(GetString("/task prog untuk melihat progres tugas"));
+            args.Player.SendInfoMessage(GetString("/task pr untuk mengirim tugas"));
+            args.Player.SendInfoMessage(GetString("/task del untuk menghapus tugas"));
+            args.Player.SendInfoMessage(GetString("/task reset untuk mereset semua tugas yang selesai"));
+        }
+    }
 }
